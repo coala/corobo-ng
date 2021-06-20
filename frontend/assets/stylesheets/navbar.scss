@@ -1,0 +1,30 @@
+@import 'colors.scss';
+
+.navbar {
+  display: flex;
+  width: 100%;
+  margin: auto;
+  padding: 12px;
+  height: 64px;
+  max-width: 1440px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__icon {
+    font-size: 2rem;
+  }
+
+  &__items {
+    margin-left: auto;
+
+    &--link {
+      text-decoration: none;
+      padding: 8px 16px;
+      background-color: $emerald-700;
+      border-radius: 3px;
+      font-size: 1rem;
+      color: $white;
+    }
+  }
+}

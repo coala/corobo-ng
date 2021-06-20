@@ -1,0 +1,15 @@
+@import 'colors.scss';
+
+.button {
+  display: flex;
+  padding: 8px;
+  align-items: center;
+  border-radius: 3px;
+  background-color: $trueGray-300;
+
+  &__icon {
+    margin-right: 8px;
+    height: 24px;
+    width: 24px;
+  }
+}

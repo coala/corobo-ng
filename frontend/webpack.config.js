@@ -9,7 +9,7 @@ module.exports = {
     publicPath: '/',
   },
   resolve: {
-    modules: [path.resolve(__dirname, './src'), 'node_modules'],
+    modules: ['node_modules'],
     extensions: ['.js', '.jsx'],
   },
   module: {
@@ -24,13 +24,10 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
+          'sass-loader',
           {
             loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                plugins: ['autoprefixer', 'tailwindcss'],
-              },
-            },
+            options: {},
           },
         ],
       },
@@ -58,6 +55,7 @@ module.exports = {
     }),
   ],
   devServer: {
+    historyApiFallback: true,
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 3000,

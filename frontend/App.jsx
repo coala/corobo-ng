@@ -1,11 +1,20 @@
 import React from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import NavBar from './components/NavBar';
+import SignIn from './components/SignIn';
+
+import './assets/stylesheets/base.scss';
 
 const App = () => {
   return (
-    <div>
-      <h1>corobo-ng</h1>
-      <p>The next generation corobo devops bot</p>
-    </div>
+    <Router>
+      <NavBar />
+      <Switch>
+        <Route path="/login">
+          <SignIn />
+        </Route>
+      </Switch>
+    </Router>
   );
 };
 

@@ -1,0 +1,50 @@
+@import 'colors.scss';
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .login {
+    max-width: 440px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 1px 4px $trueGray-500;
+
+    &__heading {
+      font-size: 2rem;
+      font-weight: 200;
+      margin: 8px 0;
+    }
+
+    &__description {
+      font-size: 1rem;
+      font-weight: 200;
+      line-height: 21px;
+      margin: 8px 0;
+    }
+
+    &__links {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+
+      &__button {
+        display: flex;
+        padding: 8px;
+        width: 100%;
+        background-color: $trueGray-200;
+        align-items: center;
+        justify-content: center;
+        margin: 8px 0;
+        border-radius: 3px;
+
+        &__icon {
+          width: 24px;
+          height: 24px;
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}
