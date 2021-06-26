@@ -12,4 +12,8 @@
     height: 24px;
     width: 24px;
   }
+
+  &:hover {
+    background-color: $trueGray-500;
+  }
 }

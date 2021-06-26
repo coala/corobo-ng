@@ -10,7 +10,7 @@ const App = () => {
     <Router>
       <NavBar />
       <Switch>
-        <Route path="/login">
+        <Route exact path="/login">
           <SignIn />
         </Route>
       </Switch>

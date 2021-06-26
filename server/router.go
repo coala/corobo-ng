@@ -28,7 +28,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	// Endpoints related to the auth flow
 	signupGroup := router.Group("login")
 	{
-		signupGroup.POST("/", api.GithubSignUp)
+		signupGroup.GET("/complete", api.GithubSignUp)
 	}
 
 	return router
