@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/coala/corobo-ng/controllers"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -12,6 +13,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	// Middlewares
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+	router.Use(cors.Default())
 	// router.Use(middlewares.AuthMiddleware())
 
 	api := controllers.Controller{DB: db}
@@ -28,7 +30,8 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	// Endpoints related to the auth flow
 	signupGroup := router.Group("login")
 	{
-		signupGroup.GET("/complete", api.GithubSignUp)
+		signupGroup.POST("/github", api.GithubSignUp)
+		signupGroup.POST("/gitlab", api.GitlabSignUp)
 	}
 
 	return router

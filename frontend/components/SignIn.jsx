@@ -7,10 +7,9 @@ import '../assets/stylesheets/login.scss';
 const SignIn = () => {
   const handleClick = (provider) => {
     if (provider === 'github') {
-      console.log('Sign in via Github');
       window.location = `${constants.GITHUB_AUTHORIZE_URL}?client_id=${constants.GITHUB_CLIENT_ID}&redirect_uri=${constants.GITHUB_REDIRECT_URI}&scope=read:user`;
     } else {
-      console.log('Sign in via Gitlab');
+      window.location = `${constants.GITLAB_AUTHORIZE_URL}?client_id=${constants.GITLAB_CLIENT_ID}&redirect_uri=${constants.GITLAB_REDIRECT_URI}&response_type=code&scope=read_user+read_repository`;
     }
   };
 

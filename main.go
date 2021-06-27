@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/coala/corobo-ng/config"
+	"github.com/coala/corobo-ng/db"
 	"github.com/coala/corobo-ng/server"
 )
 
@@ -15,5 +16,6 @@ func main() {
 	}
 	flag.Parse()
 	config.Init(*environment)
+	db.Init()
 	server.Init()
 }

@@ -6,6 +6,7 @@ database:
   name: corobo
   user: postgres
   password: postgres
+  driver: postgres
 keys:
   github_id: github_client_id
   github_secret: github_client_secret

@@ -43,7 +43,7 @@ func GetUserByEmail(db *gorm.DB, email string) (*models.User, error) {
 	var err error
 	user := new(models.User)
 
-	if err = db.Find(&user, "email = ?", email).Error; err != nil {
+	if err = db.First(&user, "email = ?", email).Error; err != nil {
 		log.Println(err)
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func CreateUser(db *gorm.DB, userData map[string]interface{}) (*models.User, err
 	user := &models.User{
 		Name:       userData["name"].(string),
 		Email:      userData["email"].(string),
-		ProviderId: userData["id"].(int64),
+		ProviderId: int64(userData["id"].(float64)),
 		Token:      generateToken(userData["email"].(string)),
 	}
 
@@ -108,13 +108,13 @@ func GetGithubAccessToken(code string) (string, error) {
 	err = json.Unmarshal(body, &tokenData)
 
 	if err != nil {
-		log.Printf("Error decoding Github token response, %v", string(bytes.Replace(body, []byte("\r"), []byte("\r\n"), -1)))
+		log.Printf("Error decoding Github token response, %v", err)
 		return "", err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		log.Printf("Received non-200 response from Github while requesting access token")
-		return "", error(fmt.Errorf("non-200 response %v", body))
+	if _, ok := tokenData["error"]; ok {
+		log.Printf("Received an error response from Github while requesting access token")
+		return "", error(fmt.Errorf("error response, %v", tokenData))
 	}
 
 	log.Printf("Successfully retrieved access token, %s", tokenData["access_token"])
@@ -126,7 +126,7 @@ func GetGithubUser(code string) (map[string]interface{}, error) {
 
 	token, err := GetGithubAccessToken(code)
 	if err != nil {
-		log.Printf("Failed to get Github access token %v", err)
+		log.Printf("Failed to get Github access token, %v", err)
 		return nil, err
 	}
 
