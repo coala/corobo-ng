@@ -10,10 +10,18 @@ import (
 func NewRouter(db *gorm.DB) *gin.Engine {
 	router := gin.New()
 
+	cors := cors.New(cors.Config{
+		AllowAllOrigins:  false,
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Cookie"},
+		AllowCredentials: true,
+	})
+
 	// Middlewares
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-	router.Use(cors.Default())
+	router.Use(cors)
 	// router.Use(middlewares.AuthMiddleware())
 
 	api := controllers.Controller{DB: db}

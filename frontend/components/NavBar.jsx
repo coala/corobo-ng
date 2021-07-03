@@ -6,7 +6,9 @@ import '../assets/stylesheets/navbar.scss';
 const NavBar = () => {
   return (
     <div className="navbar">
-      <div className="navbar__icon">corobo</div>
+      <Link className="navbar__icon" to="/">
+        corobo
+      </Link>
       <div className="navbar__items">
         <Link className="navbar__items--link" to="/login">
           Sign in

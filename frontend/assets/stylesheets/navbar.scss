@@ -4,21 +4,24 @@
   display: flex;
   width: 100%;
   margin: auto;
-  padding: 12px;
+  padding: 16px;
   height: 64px;
-  max-width: 1440px;
+  max-width: 1140px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   &__icon {
     font-size: 2rem;
+    text-decoration: none;
+    color: $black;
   }
 
   &__items {
     margin-left: auto;
 
     &--link {
+      display: block;
       text-decoration: none;
       padding: 8px 16px;
       background-color: $emerald-700;

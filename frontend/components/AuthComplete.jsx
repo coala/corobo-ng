@@ -1,25 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import constants from '../constants';
+import api from '../api';
+
+import '../assets/stylesheets/authcomplete.scss';
 
 const AuthComplete = ({ provider }) => {
   const location = useLocation();
+  const history = useHistory();
   const queryParams = new URLSearchParams(location.search);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const code = queryParams.get('code');
     if (code) {
-      axios
-        .post(`${constants.BACKEND_HOST}/login/${provider}`, {
+      api({
+        method: 'POST',
+        url: `/login/${provider}`,
+        data: {
           code: queryParams.get('code'),
-        })
+        },
+      })
         .then((response) => {
           if (response.data.success) {
-            console.log(response.data.token);
+            history.replace('/');
+          } else {
+            setLoading(false);
           }
+        })
+        .catch(() => {
+          setLoading(false);
         });
     } else {
       setLoading(false);
@@ -27,12 +37,12 @@ const AuthComplete = ({ provider }) => {
   });
 
   return (
-    <div>
-      {loading ? (
-        <h1>Authenticating with {provider}...</h1>
-      ) : (
-        <h1>Unable to authenticate user, please try again.</h1>
-      )}
+    <div className="authComplete">
+      <h1 className="authComplete__heading">
+        {loading
+          ? `Authenticating with ${provider}...`
+          : 'Unable to authenticate user, please try again.'}
+      </h1>
     </div>
   );
 };

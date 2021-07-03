@@ -45,10 +45,12 @@ func (base *Controller) GithubSignUp(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Error while creating user", "success": false})
 			return
 		}
+		c.SetCookie("token", user.Token, -1, "/", "localhost", false, true)
 		c.JSON(http.StatusOK, gin.H{"token": user.Token, "success": true})
 		return
 	}
 
+	c.SetCookie("token", user.Token, 0, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, gin.H{"token": user.Token, "success": true})
 }
 
@@ -74,9 +76,11 @@ func (base *Controller) GitlabSignUp(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Error while creating user", "success": false})
 			return
 		}
+		c.SetCookie("token", user.Token, -1, "/", "localhost", false, true)
 		c.JSON(http.StatusOK, gin.H{"token": user.Token, "success": true})
 		return
 	}
 
+	c.SetCookie("token", user.Token, -1, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, gin.H{"token": user.Token, "success": true})
 }
