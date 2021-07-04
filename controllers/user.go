@@ -55,16 +55,20 @@ func (base *Controller) GithubSignUp(c *gin.Context) {
 }
 
 func (base *Controller) GitlabSignUp(c *gin.Context) {
-	githubCode := c.Request.URL.Query().Get("code")
-	log.Printf("Authenticating user with code %s", githubCode)
+	requestBody, err := utils.GetRequestBody(c)
+	if err != nil {
+		log.Printf("Aborting, unable to read request body, %v", err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Invalid request body", "success": false})
+		return
+	}
 
-	userData, err := services.GetGithubUser(githubCode)
-
+	gitlabCode := requestBody["code"].(string)
+	log.Printf("Authenticating user with code %s", gitlabCode)
+	userData, err := services.GetGitlabUser(gitlabCode)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Error while retrieving user", "success": false})
 		return
 	}
-
 	log.Printf("Got user data, %v", userData)
 
 	user, err := services.GetUserByEmail(base.DB, userData["email"].(string))
@@ -81,6 +85,6 @@ func (base *Controller) GitlabSignUp(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", user.Token, -1, "/", "localhost", false, true)
+	c.SetCookie("token", user.Token, 0, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, gin.H{"token": user.Token, "success": true})
 }

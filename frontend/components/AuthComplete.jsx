@@ -34,7 +34,7 @@ const AuthComplete = ({ provider }) => {
     } else {
       setLoading(false);
     }
-  });
+  }, []);
 
   return (
     <div className="authComplete">
