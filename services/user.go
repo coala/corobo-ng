@@ -1,32 +1,14 @@
 package services
 
 import (
-	"bytes"
-	"crypto/md5"
-	"encoding/hex"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
-	"os"
 
 	"github.com/coala/corobo-ng/models"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/coala/corobo-ng/utils"
 	"gorm.io/gorm"
 )
 
-func generateToken(email string) string {
-	hash, err := bcrypt.GenerateFromPassword([]byte(email), bcrypt.DefaultCost)
-	if err != nil {
-		log.Fatalf("Error generating hash, %v", err)
-	}
-
-	hasher := md5.New()
-	hasher.Write(hash)
-	return hex.EncodeToString(hasher.Sum(nil))
-}
-
+// Get user object for given id
 func GetUser(db *gorm.DB, id string) (*models.User, error) {
 	var err error
 	user := new(models.User)
@@ -39,6 +21,7 @@ func GetUser(db *gorm.DB, id string) (*models.User, error) {
 	return user, err
 }
 
+// Get user object by email
 func GetUserByEmail(db *gorm.DB, email string) (*models.User, error) {
 	var err error
 	user := new(models.User)
@@ -51,6 +34,7 @@ func GetUserByEmail(db *gorm.DB, email string) (*models.User, error) {
 	return user, err
 }
 
+// Get user object by given provider id
 func GetUserByProviderId(db *gorm.DB, providerId int64) (*models.User, error) {
 	var err error
 	user := new(models.User)
@@ -63,13 +47,27 @@ func GetUserByProviderId(db *gorm.DB, providerId int64) (*models.User, error) {
 	return user, err
 }
 
+// Get user object by given token
+func GetUserByToken(db *gorm.DB, token string) (*models.User, error) {
+	var err error
+	user := new(models.User)
+
+	if err = db.Find(&user, "token = ?", token).Error; err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return user, err
+}
+
+// Create new user
 func CreateUser(db *gorm.DB, userData map[string]interface{}) (*models.User, error) {
 	var err error
 	user := &models.User{
 		Name:       userData["name"].(string),
 		Email:      userData["email"].(string),
 		ProviderId: int64(userData["id"].(float64)),
-		Token:      generateToken(userData["email"].(string)),
+		Token:      utils.GenerateToken(userData["email"].(string)),
 	}
 
 	if err = db.Create(&user).Error; err != nil {
@@ -78,147 +76,4 @@ func CreateUser(db *gorm.DB, userData map[string]interface{}) (*models.User, err
 	}
 
 	return user, nil
-}
-
-func GetGithubAccessToken(code string) (string, error) {
-	var err error
-
-	jsonBody, _ := json.Marshal(map[string]string{
-		"client_id":     os.Getenv("GITHUB_CLIENT_ID"),
-		"client_secret": os.Getenv("GITHUB_CLIENT_SECRET"),
-		"code":          code,
-		// "redirect_uri":  "http://localhost:3000",
-	})
-
-	client := &http.Client{}
-	req, _ := http.NewRequest("POST", "https://github.com/login/oauth/access_token", bytes.NewBuffer(jsonBody))
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json")
-	log.Printf("Requesting Github for access token, %s", code)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Printf("Error getting Github access token, %v", err)
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	var tokenData map[string]string
-	err = json.Unmarshal(body, &tokenData)
-
-	if err != nil {
-		log.Printf("Error decoding Github token response, %v", err)
-		return "", err
-	}
-
-	if _, ok := tokenData["error"]; ok {
-		log.Printf("Received an error response from Github while requesting access token")
-		return "", error(fmt.Errorf("error response, %v", tokenData))
-	}
-
-	log.Printf("Successfully retrieved access token, %s", tokenData["access_token"])
-	return tokenData["access_token"], nil
-}
-
-func GetGithubUser(code string) (map[string]interface{}, error) {
-	var err error
-
-	token, err := GetGithubAccessToken(code)
-	if err != nil {
-		log.Printf("Failed to get Github access token, %v", err)
-		return nil, err
-	}
-
-	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "https://api.github.com/user", nil)
-	req.Header.Add("Authorization", fmt.Sprintf("Token %s", token))
-	resp, err := client.Do(req)
-
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	var userData map[string]interface{}
-	err = json.Unmarshal(body, &userData)
-
-	if err != nil {
-		log.Printf("Error decoding Github user data, %v", err)
-	}
-
-	return userData, nil
-}
-
-func GetGitlabAccessToken(code string) (string, error) {
-	var err error
-
-	jsonBody, _ := json.Marshal(map[string]string{
-		"client_id":     os.Getenv("GITLAB_CLIENT_ID"),
-		"client_secret": os.Getenv("GITLAB_CLIENT_SECRET"),
-		"code":          code,
-		"grant_type":    "authorization_code",
-		"redirect_uri":  "http://localhost:3000/login/gitlab/complete",
-	})
-	client := &http.Client{}
-	req, _ := http.NewRequest("POST", "https://gitlab.com/oauth/token", bytes.NewBuffer(jsonBody))
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Accept", "application/json")
-
-	log.Printf("Requesting Gitlab for access token for code %s", code)
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Printf("Error getting access token for Gitlab, %v", err)
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	var tokenData map[string]interface{}
-	err = json.Unmarshal(body, &tokenData)
-
-	if err != nil {
-		log.Printf("Error decoding Gitlab token response, %v", err)
-		return "", err
-	}
-
-	if _, ok := tokenData["error"]; ok {
-		log.Printf("Received an error response from Gitlab while requesting access token")
-		return "", error(fmt.Errorf("error response, %v", tokenData))
-	}
-
-	log.Printf("Successfully retrieved access token, %s", tokenData["access_token"])
-	return tokenData["access_token"].(string), nil
-}
-
-func GetGitlabUser(code string) (map[string]interface{}, error) {
-	var err error
-
-	token, err := GetGitlabAccessToken(code)
-	if err != nil {
-		log.Printf("Failed to get Gitlab access token, %v", err)
-		return nil, err
-	}
-
-	client := &http.Client{}
-	req, _ := http.NewRequest("GET", "https://gitlab.com/api/v4/user", nil)
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
-	resp, err := client.Do(req)
-
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	var userData map[string]interface{}
-	err = json.Unmarshal(body, &userData)
-
-	if err != nil {
-		log.Printf("Error decoding Github user data, %v", err)
-	}
-
-	return userData, nil
 }

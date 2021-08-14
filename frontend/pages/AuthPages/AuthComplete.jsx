@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import api from '../api';
+import api from '../../api';
+import { updateAuth } from './slices/appSlice';
 
-import '../assets/stylesheets/authcomplete.scss';
+import './stylesheets/authcomplete.scss';
 
 const AuthComplete = ({ provider }) => {
   const location = useLocation();
   const history = useHistory();
-  const queryParams = new URLSearchParams(location.search);
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(true);
+
+  const queryParams = new URLSearchParams(location.search);
 
   useEffect(() => {
     const code = queryParams.get('code');
@@ -23,6 +28,7 @@ const AuthComplete = ({ provider }) => {
       })
         .then((response) => {
           if (response.data.success) {
+            dispatch(updateAuth({ isLoggedIn: true }));
             history.replace('/');
           } else {
             setLoading(false);

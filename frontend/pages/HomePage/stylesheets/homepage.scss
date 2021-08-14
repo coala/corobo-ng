@@ -1,16 +1,18 @@
+@import 'assets/stylesheets/colors.scss';
+
 .homepage {
   &__banner {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-image: url(../images/coala_background.svg);
+    background-image: url(../../../assets/images/coala_background.svg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     height: 30vh;
 
     &__text {
-      color: #fff;
+      color: $white;
       font-size: 2rem;
       text-align: left;
       padding: 1rem;

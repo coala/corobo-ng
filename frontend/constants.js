@@ -1,11 +1,8 @@
-const HOST =
-  process.env.NODE_ENV === 'production'
-    ? 'https://corobo-ng.coala.io'
-    : 'http://localhost:3000';
-const BACKEND_HOST =
-  process.env.NODE_ENV === 'production'
-    ? 'https://api.corobo-ng.coala.io'
-    : 'http://localhost:8080';
+const IS_PROD = process.env.NODE_ENV === 'production';
+const HOST = IS_PROD ? 'https://corobo-ng.coala.io' : 'http://localhost:3000';
+const BACKEND_HOST = IS_PROD
+  ? 'https://api.corobo-ng.coala.io'
+  : 'http://localhost:8080';
 const GITHUB_CLIENT_ID = 'ba86a85db9f2349d1011';
 const GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize';
 const GITHUB_REDIRECT_URI = `${HOST}/login/github/complete`;
@@ -15,6 +12,7 @@ const GITLAB_AUTHORIZE_URL = 'https://gitlab.com/oauth/authorize';
 const GITLAB_REDIRECT_URI = `${HOST}/login/gitlab/complete`;
 
 const constants = {
+  IS_PROD,
   HOST,
   BACKEND_HOST,
   GITHUB_CLIENT_ID,

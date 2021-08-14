@@ -1,11 +1,14 @@
 package utils
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func GetRequestBody(c *gin.Context) (map[string]interface{}, error) {
@@ -23,4 +26,16 @@ func GetRequestBody(c *gin.Context) (map[string]interface{}, error) {
 		return nil, err
 	}
 	return jsonData, nil
+}
+
+// Generate a unique token for the user for authorization
+func GenerateToken(email string) string {
+	hash, err := bcrypt.GenerateFromPassword([]byte(email), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatalf("Error generating hash, %v", err)
+	}
+
+	hasher := md5.New()
+	hasher.Write(hash)
+	return hex.EncodeToString(hasher.Sum(nil))
 }
