@@ -1,10 +1,16 @@
-import React from 'react';
-import GitHubIcon from './Icons/GitHubIcon';
-import constants from '../constants';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import GitHubIcon from '../../components/Icons/GitHubIcon';
+import constants from '../../constants';
+import { getIsLoggedIn } from './slices/selectors';
 
-import '../assets/stylesheets/login.scss';
+import './stylesheets/login.scss';
 
-const SignIn = () => {
+const Login = () => {
+  const history = useHistory();
+  const isLoggedIn = useSelector(getIsLoggedIn);
+
   const handleClick = (provider) => {
     if (provider === 'github') {
       window.location = `${constants.GITHUB_AUTHORIZE_URL}?client_id=${constants.GITHUB_CLIENT_ID}&redirect_uri=${constants.GITHUB_REDIRECT_URI}&scope=read:user`;
@@ -12,6 +18,12 @@ const SignIn = () => {
       window.location = `${constants.GITLAB_AUTHORIZE_URL}?client_id=${constants.GITLAB_CLIENT_ID}&redirect_uri=${constants.GITLAB_REDIRECT_URI}&response_type=code&scope=read_user+read_repository`;
     }
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      history.push('/');
+    }
+  }, []);
 
   return (
     <div className="container">
@@ -47,4 +59,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default Login;

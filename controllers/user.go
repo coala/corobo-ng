@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Get user object from id
 func (base *Controller) GetUser(c *gin.Context) {
 	user, err := services.GetUser(base.DB, c.Params.ByName("id"))
 
@@ -19,6 +20,7 @@ func (base *Controller) GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"user": user, "success": true})
 }
 
+// Create user object from Github data and or return access token
 func (base *Controller) GithubSignUp(c *gin.Context) {
 	requestBody, err := utils.GetRequestBody(c)
 	if err != nil {
@@ -54,6 +56,7 @@ func (base *Controller) GithubSignUp(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": user.Token, "success": true})
 }
 
+// Create user object from Gitlab data and or return access token
 func (base *Controller) GitlabSignUp(c *gin.Context) {
 	requestBody, err := utils.GetRequestBody(c)
 	if err != nil {
@@ -87,4 +90,9 @@ func (base *Controller) GitlabSignUp(c *gin.Context) {
 
 	c.SetCookie("token", user.Token, 0, "/", "localhost", false, true)
 	c.JSON(http.StatusOK, gin.H{"token": user.Token, "success": true})
+}
+
+// Revoke access token and set cookie to invalid data
+func (base *Controller) LogoutUser(c *gin.Context) {
+
 }
