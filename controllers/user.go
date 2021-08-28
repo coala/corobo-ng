@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/coala/corobo-ng/models"
 	"github.com/coala/corobo-ng/services"
 	"github.com/coala/corobo-ng/utils"
 	"github.com/gin-gonic/gin"
@@ -92,7 +93,17 @@ func (base *Controller) GitlabSignUp(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": user.Token, "success": true})
 }
 
+// Check if the token is correct and return success
+func (base *Controller) LoginUser(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "Authentication successful", "success": true})
+}
+
 // Revoke access token and set cookie to invalid data
 func (base *Controller) LogoutUser(c *gin.Context) {
-
+	user := c.MustGet("user").(*models.User)
+	base.DB.Model(&user).Update("Token", utils.GenerateToken(user.Email))
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Successfully logged out",
+		"success": true,
+	})
 }

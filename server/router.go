@@ -30,7 +30,11 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	router.GET("/health", api.Health)
 
 	// Invalidate token and logout
-	router.PUT("/logout", api.LogoutUser)
+
+	logoutGroup := router.Group("logout").Use(middlewares.AuthMiddleware((db)))
+	{
+		logoutGroup.PUT("", api.LogoutUser)
+	}
 
 	// All endpoints realted to /user
 	userGroup := router.Group("user").Use(middlewares.AuthMiddleware(db))
@@ -41,6 +45,7 @@ func NewRouter(db *gorm.DB) *gin.Engine {
 	// Endpoints related to the auth flow
 	signupGroup := router.Group("login")
 	{
+		signupGroup.GET("", api.LoginUser)
 		signupGroup.POST("/github", api.GithubSignUp)
 		signupGroup.POST("/gitlab", api.GitlabSignUp)
 	}

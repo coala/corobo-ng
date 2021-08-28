@@ -36,7 +36,7 @@ func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		_, err = services.GetUserByToken(db, token)
+		user, err := services.GetUserByToken(db, token)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"message": "User not found",
@@ -44,6 +44,8 @@ func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
 			})
 			return
 		}
+
+		c.Set("user", user)
 		c.Next()
 	}
 }

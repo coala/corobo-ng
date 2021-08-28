@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import GitHubIcon from '../../components/Icons/GitHubIcon';
-import constants from '../../constants';
 import { getIsLoggedIn } from './slices/selectors';
+import constants from '../../constants';
+import GitHubIcon from '../../components/Icons/GitHubIcon';
+import GitLabIcon from '../../components/Icons/GitLabIcon';
 
 import './stylesheets/login.scss';
 
@@ -49,7 +50,7 @@ const Login = () => {
             onClick={() => handleClick('gitlab')}
           >
             <div className="login__links__button__icon">
-              <GitHubIcon />
+              <GitLabIcon />
             </div>
             Login via GitLab
           </button>
