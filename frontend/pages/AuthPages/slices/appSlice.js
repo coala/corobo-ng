@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import api from '../../../api';
 
 const { actions, reducer } = createSlice({
   name: 'auth',
@@ -16,3 +17,14 @@ const { actions, reducer } = createSlice({
 export default reducer;
 
 export const { updateAuth } = actions;
+
+export const getLoggedInState = () => (dispatch) => {
+  api({
+    method: 'GET',
+    url: '/login',
+  })
+    .then((response) => {
+      dispatch(updateAuth({ isLoggedIn: response.data.success }));
+    })
+    .catch(() => dispatch(updateAuth({ isLoggedIn: false })));
+};

@@ -4,24 +4,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
 
   .login {
     max-width: 440px;
-    padding: 16px;
+    padding: 2rem;
     text-align: center;
     box-shadow: 0 1px 4px $trueGray-500;
 
     &__heading {
       font-size: 2rem;
       font-weight: 200;
-      margin: 8px 0;
+      margin: 1rem 0;
     }
 
     &__description {
       font-size: 1rem;
       font-weight: 200;
-      line-height: 21px;
-      margin: 8px 0;
+      line-height: 1.5rem;
+      margin: 1rem 0;
     }
 
     &__links {
@@ -31,19 +32,19 @@
 
       &__button {
         display: flex;
-        padding: 8px;
+        padding: 0.75rem;
         width: 100%;
         background-color: $trueGray-200;
         align-items: center;
         justify-content: center;
-        margin: 8px 0;
+        margin: 0.5rem 0;
         border-radius: 3px;
         border: none;
 
         &__icon {
           width: 24px;
           height: 24px;
-          margin-right: 8px;
+          margin-right: 0.5rem;
         }
 
         &:hover {
